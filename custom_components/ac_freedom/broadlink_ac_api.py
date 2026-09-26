@@ -569,7 +569,8 @@ class BroadlinkAcApi:
         try:
             self.state.temperature = (data[12] >> 3) + 8
             self.state.vertical_fixation = data[12] & 0b00000111
-            self.state.horizontal_fixation = data[13] & 0b00000111
+            # Horizontal fixation lives in the upper 3 bits, like in the command (cmd[11] = h << 5)
+            self.state.horizontal_fixation = (data[13] >> 5) & 0b00000111
             self.state.fan_speed = (data[15] >> 5) & 0b00000111
             self.state.mute = (data[16] >> 7) & 0b00000001
             self.state.turbo = (data[16] >> 6) & 0b00000001
