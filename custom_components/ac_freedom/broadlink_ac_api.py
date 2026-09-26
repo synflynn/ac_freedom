@@ -77,6 +77,7 @@ class AcState:
     clean: int = 0
     display: int = 1
     mildew: int = 0
+    eco: int = 0
     ambient_temp: float = 0.0
 
 
@@ -579,6 +580,7 @@ class BroadlinkAcApi:
             self.state.clean = (data[20] >> 2) & 0b00000001
             self.state.display = (data[22] >> 4) & 0b00000001
             self.state.mildew = (data[22] >> 3) & 0b00000001
+            self.state.eco = (data[20] >> 3) & 0b00000001
 
             # Check for half-degree temperature
             if len(data) > 14 and (data[14] >> 7) & 1:
@@ -640,9 +642,10 @@ class BroadlinkAcApi:
         cmd[16] = 0x00
         cmd[17] = 0x00
 
-        # Power, clean, health
+        # Power, eco, clean, health
         cmd[18] = (
             ((self.state.power & 0x01) << 5)
+            | ((self.state.eco & 0x01) << 3)
             | ((self.state.clean & 0x01) << 2)
             | ((self.state.health & 0x01) << 1)
         )
